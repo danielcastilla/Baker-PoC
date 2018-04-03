@@ -77,7 +77,6 @@ import com.ing.baker.runtime.core.Baker
 
     //list of validation error
     val errors: Seq[String] = compiledRecipe.validationErrors
-
     val visualization: String = compiledRecipe.getRecipeVisualization
 
   //implementations
@@ -88,7 +87,7 @@ import com.ing.baker.runtime.core.Baker
     }
 
     val manufacturesGoodsImpl = manufactureGoods implement{
-      (goods: String) => {
+      (order: String) => {
         goodsManufactured.instance()
       }
     }
@@ -108,15 +107,17 @@ import com.ing.baker.runtime.core.Baker
     val implementations = Seq(validateOrderImpl, manufacturesGoodsImpl, sendInvoiceImpl, shipGoodsImpl)
 
     val baker = new Baker()
+    baker.addInteractionImplementations(implementations)
 
-    baker.addRecipe(compiledRecipe)
-    baker.addInteractionImplementation(implementations)
-
-
+    val recipeId = baker.addRecipe(compiledRecipe)
     val processId = UUID.randomUUID().toString
-    val recipeId = UUID.randomUUID().toString
+
     baker.bake(recipeId, processId)
 
+    baker.bake(recipeId, processId)
+    baker.processEvent(processId, orderPlaced.instance(order))
+    baker.processEvent(processId, paymentMade.instance())
+    baker.processEvent(processId, customerInfoReceived.instance())
 
 
 
