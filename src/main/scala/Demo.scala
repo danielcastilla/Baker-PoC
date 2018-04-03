@@ -112,6 +112,7 @@ import com.ing.baker.runtime.core.Baker
     baker.addRecipe(compiledRecipe)
     baker.addInteractionImplementation(implementations)
 
+
     val processId = UUID.randomUUID().toString
     val recipeId = UUID.randomUUID().toString
     baker.bake(recipeId, processId)
